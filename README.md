@@ -36,10 +36,10 @@ fn main() {
 
     let v_len = reader.get_version_string(&mut ver_buf).unwrap();
 
-    println!(
-        "ver: {} \"{}\"",
-        v_len,
-        std::str::from_utf8(&ver_buf[..v_len as usize]).unwrap()
-    );
+    // info!(
+    //     "ver: {} \"{}\"",
+    //     v_len,
+    //     std::str::from_utf8(&ver_buf[..v_len as usize]).unwrap()
+    // );
 }
 ```

@@ -189,14 +189,14 @@ impl SimpleCmd for Iso15693GenericCommand {
     type Response = Option<usize>;
 
     /// NOt usable
-    fn get_cmd_hex(&self, buf: &mut [u8]) -> Result<usize, Error> {
+    fn get_cmd_hex(&self, _buf: &mut [u8]) -> Result<usize, Error> {
         panic!("Not usable")
     }
 
     //This has to be used for the commands to work
     fn get_cmd_hex_with_payload(&self, buf: &mut Vec<u8>, payload: &str) -> Result<usize, Error> {
         let cmd = format(format_args!("0D00{payload}FF"));
-        println!("{}",cmd);
+        //info!("{}",cmd);
         buf.append(&mut cmd.as_bytes().to_vec());
         Ok(buf.len())
     }

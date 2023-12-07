@@ -4,12 +4,11 @@
 
 #![deny(missing_docs)]
 
-#[macro_use]
-use bitflags;
+
 extern crate byteorder;
-#[macro_use(block)]
-use nb;
+
 extern crate embedded_hal as hal;
+extern crate serialport;
 extern crate simple_hex as hex;
 extern crate alloc;
 use commands::*;
@@ -61,7 +60,10 @@ where
     /// Execute a blocking read of a single byte from the serial port
     fn read_byte(&mut self) -> Result<u8, Error> {
         match block!(self.rx.read()) {
-            Ok(c) => {println!("byte read: {:?}", c); Ok(c)},
+            Ok(c) => {
+                //info!("read byte {:?}",c);
+                Ok(c)
+            },
             Err(_e) => Err(Error::Read),
         }
     }
@@ -136,7 +138,7 @@ where
     /// Write the commands to the serial port
     fn issue_cmd<C: SimpleCmd>(&mut self, buf: &mut [u8], cmd: &C) -> Result<(), Error> {
         let sz = cmd.get_cmd_hex(buf)?;
-        // println!("buf {:x?}{:x?}",buf, b"\r");
+        // info!("buf {:x?}{:x?}",buf, b"\r");
         self.write_buf(&buf[..sz])?;
         self.write_buf(b"\r")?;
         Ok(())
@@ -145,7 +147,7 @@ where
     /// Write the commands to the serial port
     fn issue_cmd_payload<C: SimpleCmd>(&mut self, buf: &mut Vec<u8>, payload: &str, cmd: &C) -> Result<(), Error> {
         let sz = cmd.get_cmd_hex_with_payload(buf, payload)?;
-
+        
         self.write_buf(&buf[..sz])?;
         self.write_buf(b"\r")?;
         Ok(())
@@ -153,7 +155,7 @@ where
 
     /// Write the entire contents of `buf` to the serial port
     fn write_buf(&mut self, buf: &[u8]) -> Result<(), Error> {
-        println!("buf {:x?}",buf);
+        //info!("buf {}",std::str::from_utf8(buf).unwrap());
         for c in buf.iter() {
             match block!(self.tx.write(*c)) {
                 Ok(_) => {}
